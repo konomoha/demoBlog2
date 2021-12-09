@@ -2,18 +2,23 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Article;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BlogController extends AbstractController
 {
     #[Route('/blog', name: 'blog')]
-    public function index(): Response
+    public function blog(ManagerRegistry $doctrine): Response
     {
-        return $this->render('blog/index.html.twig', [
-            'controller_name' => 'BlogController',
-        ]);
+        $repoArticle = $doctrine->getRepository(Article::class);
+        $articles = $repoArticle->findAll();
+
+        dd($articles);
+
+        return $this->render('blog/blog.html.twig');
     }
 
     #[Route('/', name:"home")]
@@ -23,5 +28,11 @@ class BlogController extends AbstractController
             'title'=> 'Bienvenue sur le blog Symfony', 
             'age' => 25
         ]);
+    }
+
+    #[Route('/blog/12', name:'blog_show')]
+    public function blogShow(): Response
+    {
+        return $this->render('blog/blog_show.html.twig');
     }
 }
